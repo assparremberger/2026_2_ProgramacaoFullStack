@@ -10,7 +10,6 @@ const campoNome = document.getElementById("txtNome")
 const listaCategorias = document.getElementById("listaCategorias")
 
 async function loadCategorias() {
-    
     try{
         const resposta = await fetch( endPointCategoria )
         if( !resposta.ok ){
@@ -20,6 +19,31 @@ async function loadCategorias() {
 
         const categorias = await resposta.json()
 
+        listaCategorias.innerHTML = ""
+
+        categorias.forEach( cat => {
+            listaCategorias.innerHTML += `
+                <tr>
+                    <td>${cat.id}</td>
+                    <td>${cat.nome}</td>
+                    <td>
+                        <button class="btn btn-info" 
+                                onclick="editarCategoria(
+                                                        ${cat.id} ,
+                                                        ${cat.nome} 
+                                                        )" 
+                            >Editar</button>
+                        
+                        <button class="btn btn-danger" 
+                                onclick="excluirCategoria(
+                                                        ${cat.id} 
+                                                        )" 
+                            >Excluir</button>
+
+                    </td>
+                </tr>
+                                        `
+        })
     }catch( erro ){
         console.error( erro )
         alert( "Erro ao carregar categorias!")
@@ -27,3 +51,5 @@ async function loadCategorias() {
     
 }
 
+
+loadCategorias()
