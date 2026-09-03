@@ -9,6 +9,37 @@ const campoNome = document.getElementById("txtNome")
 
 const listaCategorias = document.getElementById("listaCategorias")
 
+function preencherForm( idCat , nomeCat ){
+    campoId.value = idCat
+    
+    campoNome.value = nomeCat
+
+}
+
+async function editarCategoria( idCat , categoria ) {
+    try {
+        const resposta = await fetch( 
+                                        `${endPointCategoria}/${idCat}` ,
+                                        {
+                                            method : "PUT" ,
+                                            headers : {
+                                                "Content-Type" : "application/json"
+                                            },
+                                            body : JSON.stringify( categoria )
+                                        }
+        )
+        if( resposta.ok ) {
+            alert("Categoria editada com sucesso!")
+            loadCategorias()
+        }
+
+
+    } catch (error) {
+        console.error( erro )
+        alert( "Erro ao editar categoria!")
+    }
+}
+
 async function loadCategorias() {
     try{
         const resposta = await fetch( endPointCategoria )
@@ -28,9 +59,9 @@ async function loadCategorias() {
                     <td>${cat.nome}</td>
                     <td>
                         <button class="btn btn-info" 
-                                onclick="editarCategoria(
+                                onclick="preencherForm(
                                                         ${cat.id} ,
-                                                        ${cat.nome} 
+                                                        '${cat.nome}' 
                                                         )" 
                             >Editar</button>
                         
@@ -53,3 +84,68 @@ async function loadCategorias() {
 
 
 loadCategorias()
+
+
+
+
+async function excluirCategoria( id ){
+    const confirma = confirm("Confirma a exclusão?")
+    if ( !confirma ) return
+
+    try{
+        const resposta = await fetch( 
+                                        `${endPointCategoria}/${id}` ,
+                                        { method : 'DELETE'} 
+                                    )
+
+        if( resposta.ok ){
+            alert("Categoria excluída com sucesso!")
+            loadCategorias()
+        }
+    }catch( erro ){
+        console.log( erro )
+        alert("Erro ao excluir a categoria!")
+    }
+}
+
+async function addCategoria( categoria ) {
+    const resposta = await fetch( 
+                                    endPointCategoria , 
+                                    {
+                                        method : "POST" ,
+                                        headers : { 
+                                            "Content-Type" : "application/json"
+                                        } ,
+                                        body : JSON.stringify( categoria )
+                                    } 
+                                )
+    if( resposta.ok ){
+        loadCategorias()
+    }
+    return await resposta.json()
+}
+
+
+
+
+formulario.addEventListener( "submit" , async function(evento) {
+    evento.preventDefault()
+    const idCat = campoId.value
+    const categoria = { nome : campoNome.value }
+
+    try {
+        if( idCat ) {
+            // chamar a função para editar
+            await editarCategoria( idCat , categoria )
+        }else{
+            await addCategoria( categoria )
+            alert("Categoria cadastrada com sucesso!")
+        }
+        formulario.reset()
+        campoId.value = ""
+    } catch (error) {
+        
+    }
+
+    
+} )
