@@ -1,8 +1,8 @@
 
 
 abstract class Pessoa{
-    nome : string;
-    fone : string;
+    public nome : string;
+    public fone : string;
     private id : number;
     protected endereco: string | null;
 
@@ -25,6 +25,11 @@ class Juridica extends Pessoa{
         super(name, fone);
         this.cnpj = cnpj;
         this.endereco = "";
+    }
+    imprimir(): void {
+        super.imprimir()
+        console.log(`CNPJ: ${this.cnpj}`)
+        console.log(`Endereço: ${this.endereco}`)
     }
     cadastrar(): void{
         console.log( 'Pessoa Jurídica cadastrada com sucesso!' );
